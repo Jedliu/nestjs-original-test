@@ -23,12 +23,8 @@ export default defineConfig({
       'class-validator',
       'fastify-swagger',
       'libsql',
-      'mock-aws-s3',
       'better-sqlite3',
-      'nock',
-      'aws-sdk',
       'mariadb/callback',
-      '@mapbox/node-pre-gyp',
     ],
   },
 });

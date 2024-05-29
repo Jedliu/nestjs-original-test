@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Chrome Debugger",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:5173/",
+      "webRoot": "${workspaceFolder}",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Debug Frontend",
+      "command": "nx dev web",
+      "cwd": "${workspaceFolder}",
+      "request": "launch",
+      "type": "node-terminal",
+      "serverReadyAction": {
+        "action": "startDebugging",
+        "name": "Launch Chrome Debugger",
+        "pattern": "localhost"
+      }
+    },
+    {
+      "name": "Debug Backend",
+      "command": "nx dev api",
+      "cwd": "${workspaceFolder}",
+      "request": "launch",
+      "type": "node-terminal"
+    }
+  ]
+}
