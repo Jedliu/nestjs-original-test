@@ -1,34 +1,42 @@
+import { Logger } from '@nestjs/common';
 import {
-    ConnectedSocket,
-    MessageBody,
-    OnGatewayConnection,
-    OnGatewayDisconnect,
-    SubscribeMessage,
-    WebSocketGateway,
-    WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'http';
-import { Socket } from 'socket.io';
+
+import { Server } from 'socket.io';
 
 @WebSocketGateway()
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-    @WebSocketServer()
-    server: Server;
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  private readonly logger = new Logger(ChatGateway.name);
 
-    handleConnection(client: Socket) {
-        // Handle connection event
-    }
+  @WebSocketServer() io: Server;
 
-    handleDisconnect(client: Socket) {
-        // Handle disconnection event
-    }
+  afterInit() {
+    this.logger.log('Initialized');
+  }
 
-    @SubscribeMessage('message')
-    handleMessage(
-        @MessageBody() data: string,
-        @ConnectedSocket() client: Socket,
-    ) {
-        // Handle received message
-        this.server.emit('message', data); // Broadcast the message to all connected clients
-    }
+  handleConnection(client: any) {
+    const { sockets } = this.io.sockets;
+
+    this.logger.log(`Client id: ${client.id} connected`);
+    this.logger.debug(`Number of connected clients: ${sockets.size}`);
+  }
+
+  handleDisconnect(client: any) {
+    this.logger.log(`Cliend id:${client.id} disconnected`);
+  }
+
+  @SubscribeMessage('ping')
+  handleMessage(client: any, data: any) {
+    this.logger.log(`Message received from client id: ${client.id}`);
+    this.logger.debug(`Payload: ${data}`);
+    this.io.emit('pong', data);
+  }
 }
